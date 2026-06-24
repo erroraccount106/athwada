@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="https://quge5.com/88/tag.min.js" data-zone="252666" async data-cfasync="false"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ALUTH EWA - Porn Videos</title>
+<link rel="stylesheet" href="style.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nav-container">
+    <a href="index.html" class="logo" id="logoClick">
+      <i class="fa-solid fa-film"></i>
+      <span>ALUTH <span class="accent">EWA</span></span>
+    </a>
+    <div class="search-box">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" id="searchInput" placeholder="Search..." />
+    </div>
+  </div>
+</nav>
+
+<!-- HERO (Simplified) -->
+<section class="hero" id="home">
+  <div class="hero-content">
+    <h1>ALUTH <span class="accent">EWA</span></h1>
+    <p>Latest Porn Videos</p>
+  </div>
+</section>
+
+<!-- MAIN CONTENT -->
+<main class="main-content">
+  
+  <!-- CATEGORIES VIEW -->
+  <section class="categories-section" id="categoriesView">
+    <div class="section-header">
+      <h2><i class="fa-solid fa-layer-group"></i> Categories</h2>
+      <p id="categoryCount">Loading categories...</p>
+    </div>
+    <div class="categories-grid" id="categoriesGrid">
+      <div class="loader"><i class="fa-solid fa-spinner fa-spin"></i> Loading...</div>
+    </div>
+  </section>
+
+  <!-- MOVIES VIEW (inside category) -->
+  <section class="movies-section" id="moviesView" style="display:none;">
+    <div class="section-header">
+      <button class="back-btn" id="backBtn">
+        <i class="fa-solid fa-arrow-left"></i> Back to Categories
+      </button>
+      <h2 id="categoryTitle"><i class="fa-solid fa-folder-open"></i> Category</h2>
+      <p id="movieCount">0 Videos</p>
+    </div>
+    <div class="movies-grid" id="moviesGrid"></div>
+  </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-content">
+    <div class="footer-logo">
+      <i class="fa-solid fa-film"></i> ALUTH <span class="accent">EWA</span>
+    </div>
+    <p>&copy; 2026 ALUTH EWA. All rights reserved.</p>
+    <div class="social-icons">
+      <a href="#"><i class="fa-brands fa-telegram"></i></a>
+      <a href="#"><i class="fa-brands fa-facebook"></i></a>
+      <a href="#"><i class="fa-brands fa-instagram"></i></a>
+      <a href="#"><i class="fa-brands fa-youtube"></i></a>
+    </div>
+  </div>
+</footer>
+
+<!-- MODAL -->
+<div class="modal" id="movieModal">
+  <div class="modal-content">
+    <button class="modal-close" id="modalClose"><i class="fa-solid fa-xmark"></i></button>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<!-- SHARE MODAL -->
+<div class="modal" id="shareModal">
+  <div class="modal-content share-modal-content">
+    <button class="modal-close" id="shareModalClose"><i class="fa-solid fa-xmark"></i></button>
+    <div class="modal-body">
+      <h3 style="text-align:center; margin-bottom:20px;">
+        <i class="fa-solid fa-share-nodes" style="color:var(--accent);"></i> Share
+      </h3>
+      <div class="share-options" id="shareOptions"></div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script type="module" src="script.js"></script>
+</body>
+</html>
