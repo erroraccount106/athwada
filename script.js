@@ -178,7 +178,7 @@ function renderCategories(movies, searchTerm = '') {
         </div>
         <div class="category-name">${cat}</div>
         <div class="category-count">
-          <i class="fa-solid fa-film"></i> ${count} ${count === 1 ? 'movie' : 'movies'}
+          <i class="fa-solid fa-film"></i> ${count} ${count === 1 ? 'video' : 'videos'}
         </div>
       </div>
     `;
@@ -199,7 +199,7 @@ function openCategory(categoryName) {
   const movies = groups[categoryName] || [];
 
   categoryTitle.innerHTML = `<i class="fa-solid ${getCategoryIcon(categoryName)}"></i> ${categoryName}`;
-  movieCount.textContent = `${movies.length} ${movies.length === 1 ? 'movie' : 'movies'}`;
+  movieCount.textContent = `${movies.length} ${movies.length === 1 ? 'video' : 'videos'}`;
 
   renderMovies(movies);
 
@@ -229,7 +229,7 @@ function renderMovies(movies) {
     moviesGrid.innerHTML = `
       <div class="empty-state" style="grid-column: 1/-1;">
         <i class="fa-solid fa-film"></i>
-        <h3>No movies</h3>
+        <h3>No videos</h3>
       </div>`;
     return;
   }
