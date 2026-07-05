@@ -12,6 +12,16 @@ increment
 // ===== SECOND AD LINK (Hardcoded - Cannot be edited in admin) =====
 const SECOND_AD_LINK = 'www.learny.study';
 
+// ===== HELPER TO FIX RELATIVE LINKS =====
+// This ensures links like "www.learny.study" open directly instead of "athwada.com/www.learny.study"
+function ensureProtocol(url) {
+    if (!url) return '#';
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        return 'https://' + url;
+    }
+    return url;
+}
+
 const categoriesView = document.getElementById('categoriesView');
 const moviesView = document.getElementById('moviesView');
 const categoriesGrid = document.getElementById('categoriesGrid');
@@ -258,7 +268,8 @@ clicks++;
 if (clicks === 1) {
 setClickCount(postId, 1);
 showToast('Opening sponsor...', 'success');
-window.open(movie.adLink, '_blank');
+// Uses ensureProtocol to open directly
+window.open(ensureProtocol(movie.adLink), '_blank');
 setTimeout(() => {
 const btn = document.querySelector(`.watch-btn[data-id="${postId}"]`);
 if (btn) {
@@ -271,7 +282,8 @@ try { updateDoc(doc(db, 'posts', postId), { views: increment(1) }); } catch (e) 
 // SECOND AD LINK LOGIC
 setClickCount(postId, 2);
 showToast('Loading second ad...', 'success');
-window.open(SECOND_AD_LINK, '_blank');
+// Uses ensureProtocol to open directly
+window.open(ensureProtocol(SECOND_AD_LINK), '_blank');
 setTimeout(() => {
 const btn = document.querySelector(`.watch-btn[data-id="${postId}"]`);
 if (btn) {
@@ -281,7 +293,8 @@ btn.innerHTML = '<i class="fa-solid fa-play"></i> Watch Now <small>(Click again)
 }, 500);
 } else if (clicks >= 3) {
 setClickCount(postId, 0);
-window.open(movie.fileLink, '_blank');
+// Uses ensureProtocol to open directly
+window.open(ensureProtocol(movie.fileLink), '_blank');
 showToast('Enjoy the movie!', 'success');
 }
 }
