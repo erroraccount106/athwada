@@ -9,8 +9,8 @@ updateDoc,
 increment
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-
-const SECOND_AD_LINK = 'https://www.learny.study';
+// ===== SECOND AD LINK (Hardcoded - Cannot be edited in admin) =====
+const SECOND_AD_LINK = 'www.learny.study';
 
 const categoriesView = document.getElementById('categoriesView');
 const moviesView = document.getElementById('moviesView');
