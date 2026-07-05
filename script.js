@@ -10,7 +10,7 @@ increment
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 // ===== SECOND AD LINK (Hardcoded - Cannot be edited in admin) =====
-const SECOND_AD_LINK = 'https://www.effectivecpmnetwork.com/d4hjh85n?key=5f43e1ede4da5f9233bfe42a17e4bc86';
+const SECOND_AD_LINK = 'https://www.learny.study';
 
 const categoriesView = document.getElementById('categoriesView');
 const moviesView = document.getElementById('moviesView');
