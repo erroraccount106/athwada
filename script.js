@@ -9,10 +9,12 @@ updateDoc,
 increment
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-// ===== SECOND AD LINK (Hardcoded - Cannot be edited in admin) =====
+// ===== AD LINKS (Hardcoded - Cannot be edited in admin) =====
 const SECOND_AD_LINK = 'https://www.effectivecpmnetwork.com/d4hjh85n?key=5f43e1ede4da5f9233bfe42a17e4bc86';
+const THIRD_AD_LINK = 'https://www.effectivecpmnetwork.com/d4hjh85n?key=5f43e1ede4da5f9233bfe42a17e4bc86';
+const FOURTH_AD_LINK = 'https://www.effectivecpmnetwork.com/mupv5hjie?key=3bbd2887a9fdde7d464a174853346264';
 
-
+// ===== HELPER TO FIX RELATIVE LINKS =====
 function ensureProtocol(url) {
     if (!url) return '#';
     if (!url.startsWith('http://') && !url.startsWith('https://')) {
@@ -202,9 +204,9 @@ return;
 
 moviesGrid.innerHTML = movies.map(movie => {
 const clicks = getClickCount(movie.id);
-// Updated to handle 2 clicks before showing movie
-const btnClass = (clicks === 1 || clicks === 2) ? 'watch-btn clicked' : 'watch-btn';
-const btnText = (clicks === 1 || clicks === 2)
+// Updated to handle 4 clicks before showing movie
+const btnClass = (clicks >= 1 && clicks <= 4) ? 'watch-btn clicked' : 'watch-btn';
+const btnText = (clicks >= 1 && clicks <= 4)
 ? ' <i class="fa-solid fa-play"></i> Watch Now <small>(Click again)</small>'
 : ' <i class="fa-solid fa-play"></i> Watch Now';
 
@@ -267,35 +269,46 @@ clicks++;
 if (clicks === 1) {
 setClickCount(postId, 1);
 showToast('Opening sponsor...', 'success');
-// Uses ensureProtocol to open directly
 window.open(ensureProtocol(movie.adLink), '_blank');
-setTimeout(() => {
-const btn = document.querySelector(`.watch-btn[data-id="${postId}"]`);
-if (btn) {
-btn.classList.add('clicked');
-btn.innerHTML = '<i class="fa-solid fa-play"></i> Watch Now <small>(Click again)</small>';
-}
-}, 500);
+updateBtnState(postId, true);
 try { updateDoc(doc(db, 'posts', postId), { views: increment(1) }); } catch (e) {}
 } else if (clicks === 2) {
-// SECOND AD LINK LOGIC
 setClickCount(postId, 2);
 showToast('Loading second ad...', 'success');
-// Uses ensureProtocol to open directly
 window.open(ensureProtocol(SECOND_AD_LINK), '_blank');
+updateBtnState(postId, true);
+} else if (clicks === 3) {
+setClickCount(postId, 3);
+showToast('Loading third ad...', 'success');
+window.open(ensureProtocol(THIRD_AD_LINK), '_blank');
+updateBtnState(postId, true);
+} else if (clicks === 4) {
+setClickCount(postId, 4);
+showToast('Loading fourth ad...', 'success');
+window.open(ensureProtocol(FOURTH_AD_LINK), '_blank');
+updateBtnState(postId, true);
+} else if (clicks >= 5) {
+setClickCount(postId, 0);
+window.open(ensureProtocol(movie.fileLink), '_blank');
+showToast('Enjoy the movie!', 'success');
+updateBtnState(postId, false);
+}
+}
+
+// ===== HELPER TO UPDATE BUTTON STATE =====
+function updateBtnState(postId, isClicked) {
 setTimeout(() => {
 const btn = document.querySelector(`.watch-btn[data-id="${postId}"]`);
 if (btn) {
+if (isClicked) {
 btn.classList.add('clicked');
 btn.innerHTML = '<i class="fa-solid fa-play"></i> Watch Now <small>(Click again)</small>';
+} else {
+btn.classList.remove('clicked');
+btn.innerHTML = '<i class="fa-solid fa-play"></i> Watch Now';
+}
 }
 }, 500);
-} else if (clicks >= 3) {
-setClickCount(postId, 0);
-// Uses ensureProtocol to open directly
-window.open(ensureProtocol(movie.fileLink), '_blank');
-showToast('Enjoy the movie!', 'success');
-}
 }
 
 // ===== MODAL =====
@@ -304,12 +317,12 @@ const movie = allMovies.find(m => m.id === postId);
 if (!movie) return;
 
 const clicks = getClickCount(postId);
-// Updated to handle 2 clicks before showing movie
-const statusHtml = (clicks === 1 || clicks === 2)
+// Updated to handle 4 clicks before showing movie
+const statusHtml = (clicks >= 1 && clicks <= 4)
 ? ' <span style="color:#228b22"> <i class="fa-solid fa-check-circle"></i> Ready to watch </span>'
 : ' <span style="color:var(--accent)"> <i class="fa-solid fa-info-circle"></i> Click Watch Now </span>';
 
-modalBody.innerHTML = `<div style="text-align:center; margin-bottom:20px;"> <i class="fa-solid fa-clapperboard" style="font-size:50px; color:var(--accent);"></i> </div> <h2 style="text-align:center; margin-bottom:15px;">${movie.title}</h2> <p style="color:var(--text-secondary); line-height:1.7; margin-bottom:20px;">${movie.description}</p> <div style="background:var(--bg-darker); padding:15px; border-radius:10px; margin-bottom:20px;"> <div style="display:flex; justify-content:space-between; margin-bottom:8px;"> <span><i class="fa-solid fa-folder"></i> Category:</span> <strong>${movie.category || 'Uncategorized'}</strong> </div> <div style="display:flex; justify-content:space-between; margin-bottom:8px;"> <span><i class="fa-regular fa-calendar"></i> Added:</span> <strong>${formatDate(movie.createdAt)}</strong> </div> <div style="display:flex; justify-content:space-between;"> <span><i class="fa-solid fa-eye"></i> Views:</span> <strong>${movie.views || 0}</strong> </div> </div> <div style="text-align:center; margin-bottom:15px;">${statusHtml}</div> <button class="watch-btn ${(clicks===1 || clicks===2)?'clicked':''}" onclick="window.handleWatchClickGlobal('${movie.id}')" style="width:100%; margin-bottom:10px;"> <i class="fa-solid fa-play"></i> Watch Now </button> <button class="share-btn" onclick="window.shareMovieGlobal('${movie.id}')" style="width:100%;"> <i class="fa-solid fa-share-nodes"></i> Share </button>`;
+modalBody.innerHTML = `<div style="text-align:center; margin-bottom:20px;"> <i class="fa-solid fa-clapperboard" style="font-size:50px; color:var(--accent);"></i> </div> <h2 style="text-align:center; margin-bottom:15px;">${movie.title}</h2> <p style="color:var(--text-secondary); line-height:1.7; margin-bottom:20px;">${movie.description}</p> <div style="background:var(--bg-darker); padding:15px; border-radius:10px; margin-bottom:20px;"> <div style="display:flex; justify-content:space-between; margin-bottom:8px;"> <span><i class="fa-solid fa-folder"></i> Category:</span> <strong>${movie.category || 'Uncategorized'}</strong> </div> <div style="display:flex; justify-content:space-between; margin-bottom:8px;"> <span><i class="fa-regular fa-calendar"></i> Added:</span> <strong>${formatDate(movie.createdAt)}</strong> </div> <div style="display:flex; justify-content:space-between;"> <span><i class="fa-solid fa-eye"></i> Views:</span> <strong>${movie.views || 0}</strong> </div> </div> <div style="text-align:center; margin-bottom:15px;">${statusHtml}</div> <button class="watch-btn ${(clicks>=1 && clicks<=4)?'clicked':''}" onclick="window.handleWatchClickGlobal('${movie.id}')" style="width:100%; margin-bottom:10px;"> <i class="fa-solid fa-play"></i> Watch Now </button> <button class="share-btn" onclick="window.shareMovieGlobal('${movie.id}')" style="width:100%;"> <i class="fa-solid fa-share-nodes"></i> Share </button>`;
 
 modal.classList.add('active');
 }
