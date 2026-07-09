@@ -9,10 +9,10 @@ updateDoc,
 increment
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-// ===== AD LINKS (Hardcoded - Cannot be edited in admin) =====
+
 const SECOND_AD_LINK = 'https://www.effectivecpmnetwork.com/d4hjh85n?key=5f43e1ede4da5f9233bfe42a17e4bc86';
 const THIRD_AD_LINK = 'https://www.effectivecpmnetwork.com/d4hjh85n?key=5f43e1ede4da5f9233bfe42a17e4bc86';
-const FOURTH_AD_LINK = 'https://www.effectivecpmnetwork.com/mupv5hjie?key=3bbd2887a9fdde7d464a174853346264';
+const FOURTH_AD_LINK = 'https://www.effectivecpmnetwork.com/d4hjh85n?key=5f43e1ede4da5f9233bfe42a17e4bc86';
 
 // ===== HELPER TO FIX RELATIVE LINKS =====
 function ensureProtocol(url) {
