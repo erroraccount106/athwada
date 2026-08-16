@@ -179,7 +179,7 @@
                     <i class="fa-solid fa-hand-pointer" style="margin-right: 8px;"></i> Click Here
                 </button>
                 <div class="dp-footer-note">
-                    <i class="fa-solid fa-shield-halved"></i> 100% Safe & Secure
+                    <i class="fa-solid fa-shield-halved"></i> ads by Adsterra
                 </div>
             </div>
         `;
