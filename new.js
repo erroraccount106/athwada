@@ -1,120 +1,82 @@
-// ===== DARAZ UNSKIPPABLE POPUP & ADSTERRA FOOTER POPUP =====
+// ===== DARAZ BOTTOM ANCHOR AD (UNSKIPPABLE) & ADSTERRA SLOT =====
 (function() {
     'use strict';
 
-    const DARAZ_LINK = 'https://s.daraz.lk/s.ZUlf9';
-    const DARAZ_STORAGE_KEY = 'daraz_gift_popup_hidden';
-    
-    // 1. Inject Professional CSS (Uses your existing style.css variables)
-    const styles = `
-        /* --- DARAZ POPUP STYLES --- */
-        .dz-overlay {
+    const DARAZ_LINK = 'https://s.daraz.lk/s.ZUl9X';
+    const STORAGE_KEY = 'daraz_anchor_hidden_v1';
+
+    // 1. Inject Professional CSS (Matches your site's dark theme)
+    const css = `
+        .dz-anchor-wrapper {
             position: fixed;
-            inset: 0;
-            background: rgba(5, 2, 2, 0.92);
-            backdrop-filter: blur(12px);
+            bottom: 0;
+            left: 0;
+            width: 100%;
             z-index: 9999;
+            background: linear-gradient(90deg, var(--bg-darker, #050202) 0%, var(--bg-card, #1a0a0a) 50%, var(--bg-darker, #050202) 100%);
+            border-top: 2px solid #F85606; /* Daraz Orange */
+            box-shadow: 0 -10px 35px rgba(0, 0, 0, 0.95);
+            padding: 16px 30px;
             display: flex;
             align-items: center;
             justify-content: center;
-            animation: dzFadeIn 0.5s ease forwards;
-            padding: 20px;
+            gap: 25px;
+            transform: translateY(100%);
+            animation: dzSlideUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+            animation-delay: 1.5s; /* Slides up after page loads */
         }
-        .dz-overlay.dz-closing { animation: dzFadeOut 0.5s ease forwards; }
-        @keyframes dzFadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes dzFadeOut { from { opacity: 1; } to { opacity: 0; } }
+        .dz-anchor-wrapper.dz-hiding {
+            animation: dzSlideDown 0.5s ease forwards;
+        }
+        @keyframes dzSlideUp { to { transform: translateY(0); } }
+        @keyframes dzSlideDown { to { transform: translateY(100%); } }
 
-        .dz-box {
-            background: linear-gradient(160deg, var(--bg-card, #1a0a0a) 0%, var(--bg-darker, #050202) 100%);
-            border: 2px solid #F85606; /* Daraz Orange */
-            border-radius: 24px;
-            max-width: 420px;
-            width: 100%;
-            padding: 40px 30px;
-            text-align: center;
-            position: relative;
-            box-shadow: 0 20px 60px rgba(248, 86, 6, 0.25), 0 0 0 1px rgba(255,255,255,0.05) inset;
-            animation: dzPopIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-            overflow: hidden;
-        }
-        .dz-box.dz-shake { animation: dzShake 0.4s cubic-bezier(.36,.07,.19,.97) both; }
-        @keyframes dzPopIn {
-            0% { transform: scale(0.8) translateY(30px); opacity: 0; }
-            100% { transform: scale(1) translateY(0); opacity: 1; }
-        }
-        @keyframes dzShake {
-            10%, 90% { transform: translate3d(-2px, 0, 0); }
-            20%, 80% { transform: translate3d(4px, 0, 0); }
-            30%, 50%, 70% { transform: translate3d(-8px, 0, 0); }
-            40%, 60% { transform: translate3d(8px, 0, 0); }
-        }
-
-        .dz-glow {
-            position: absolute;
-            top: -50%; left: -50%;
-            width: 200%; height: 200%;
-            background: radial-gradient(circle, rgba(248, 86, 6, 0.15) 0%, transparent 60%);
-            pointer-events: none;
-            animation: dzRotateGlow 10s linear infinite;
-        }
-        @keyframes dzRotateGlow { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        .dz-icon {
-            font-size: 64px;
+        .dz-anchor-icon {
+            font-size: 38px;
             color: #F85606;
-            margin-bottom: 20px;
-            display: inline-block;
-            filter: drop-shadow(0 5px 15px rgba(248, 86, 6, 0.4));
+            filter: drop-shadow(0 0 10px rgba(248, 86, 6, 0.5));
             animation: dzBounce 2s infinite ease-in-out;
-            position: relative;
-            z-index: 2;
         }
-        @keyframes dzBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        @keyframes dzBounce {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(-5deg); }
+        }
 
-        .dz-title {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 32px;
+        .dz-anchor-text {
+            flex: 1;
             color: var(--text-primary, #f5f5f5);
-            letter-spacing: 1.5px;
-            line-height: 1.2;
-            margin-bottom: 15px;
-            position: relative;
-            z-index: 2;
+            font-size: 18px;
+            font-weight: 600;
+            line-height: 1.4;
+            letter-spacing: 0.5px;
         }
-        .dz-title span { color: #F85606; text-shadow: 0 0 10px rgba(248, 86, 6, 0.5); }
-
-        .dz-desc {
-            color: var(--text-secondary, #b8a8a8);
-            font-size: 14px;
-            line-height: 1.6;
-            margin-bottom: 30px;
-            position: relative;
-            z-index: 2;
+        .dz-anchor-text span {
+            color: #F85606;
+            font-weight: 800;
+            text-shadow: 0 0 8px rgba(248, 86, 6, 0.4);
         }
 
-        .dz-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
+        .dz-anchor-btn {
             background: linear-gradient(135deg, #F85606 0%, #ff7b3a 100%);
             color: #fff;
             font-weight: 700;
-            font-size: 18px;
-            padding: 16px 45px;
+            font-size: 16px;
+            padding: 14px 32px;
             border-radius: 50px;
             border: none;
             cursor: pointer;
-            width: 100%;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            box-shadow: 0 10px 25px rgba(248, 86, 6, 0.4);
+            white-space: nowrap;
+            box-shadow: 0 6px 20px rgba(248, 86, 6, 0.4);
             transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
             position: relative;
-            z-index: 2;
             overflow: hidden;
         }
-        .dz-btn::before {
+        .dz-anchor-btn::before {
             content: '';
             position: absolute;
             top: 0; left: -100%;
@@ -122,148 +84,100 @@
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
             transition: left 0.5s ease;
         }
-        .dz-btn:hover::before { left: 100%; }
-        .dz-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(248, 86, 6, 0.6); }
-        .dz-btn:active { transform: translateY(1px); }
+        .dz-anchor-btn:hover::before { left: 100%; }
+        .dz-anchor-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(248, 86, 6, 0.6);
+        }
+        .dz-anchor-btn:active { transform: scale(0.98); }
 
-        /* --- ADSTERRA FOOTER POPUP STYLES --- */
-        .adsterra-footer-popup {
-            position: fixed;
-            bottom: 0;
-            left: 0;
+        /* Adsterra Container Slot */
+        .dz-adsterra-slot {
             width: 100%;
-            z-index: 8000; /* Sits below Daraz Popup but above page content */
-            background: linear-gradient(180deg, var(--bg-card, #1a0a0a) 0%, var(--bg-darker, #050202) 100%);
-            border-top: 2px solid var(--accent, #ff2e4d);
-            box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.8);
-            padding: 15px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transform: translateY(100%);
-            animation: slideUpFooter 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-            animation-delay: 1.5s; /* Slides up slightly after page load */
-        }
-        @keyframes slideUpFooter { to { transform: translateY(0); } }
-
-        .adsterra-close-btn {
-            position: absolute;
-            top: -18px;
-            right: 15px;
-            background: var(--red-primary, #8b0000);
-            color: white;
-            border: 2px solid var(--bg-dark, #0a0505);
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 16px;
-            z-index: 10;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
-            transition: all 0.2s ease;
-        }
-        .adsterra-close-btn:hover {
-            background: var(--red-bright, #c41e3a);
-            transform: scale(1.1) rotate(90deg);
+            text-align: center;
+            margin-bottom: 10px;
+            display: none; /* Hidden by default. Change to 'block' if you paste Adsterra code inside */
         }
 
-        .adsterra-ad-container {
-            width: 100%;
-            max-width: 800px;
-            min-height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        /* Push page content up so footer doesn't overlap your site content */
+        body.has-dz-anchor {
+            padding-bottom: 90px !important;
         }
-        
-        body.has-footer-ad-popup { padding-bottom: 90px !important; }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .dz-anchor-wrapper {
+                flex-direction: column;
+                gap: 12px;
+                padding: 18px 20px;
+                text-align: center;
+            }
+            .dz-anchor-icon { font-size: 32px; }
+            .dz-anchor-text { font-size: 16px; }
+            .dz-anchor-btn {
+                width: 100%;
+                justify-content: center;
+                padding: 14px 20px;
+            }
+            body.has-dz-anchor {
+                padding-bottom: 160px !important;
+            }
+        }
     `;
 
     const styleEl = document.createElement('style');
-    styleEl.textContent = styles;
+    styleEl.textContent = css;
     document.head.appendChild(styleEl);
 
-    // 2. Daraz Popup Logic (Unskippable)
-    function initDarazPopup() {
-        if (localStorage.getItem(DARAZ_STORAGE_KEY) === 'true') return;
+    // 2. Logic
+    function init() {
+        // Check if user already clicked (Never show again)
+        if (localStorage.getItem(STORAGE_KEY) === 'true') return;
 
-        const overlay = document.createElement('div');
-        overlay.className = 'dz-overlay';
-        overlay.innerHTML = `
-            <div class="dz-box">
-                <div class="dz-glow"></div>
-                <div class="dz-icon"><i class="fa-solid fa-gift"></i></div>
-                <h2 class="dz-title">Daraz වෙතින් නොමිලේ <span>Gifts</span> දිනාගන්න!</h2>
-                <p class="dz-desc">ඔබේ නොමිලේ තෑගි දැන්ම ලබාගන්න. මෙය නැවත ලබා නොදේ!</p>
-                <button class="dz-btn" id="dzClaimBtn">
-                    <i class="fa-solid fa-hand-pointer"></i> Click Here
-                </button>
+        document.body.classList.add('has-dz-anchor');
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'dz-anchor-wrapper';
+        wrapper.innerHTML = `
+            <!-- ============================================== -->
+            <!-- PASTE YOUR ADSTERRA NATIVE/BANNER SCRIPT HERE  -->
+            <!-- (It will show right above the Daraz button)    -->
+            <!-- ============================================== -->
+            <div class="dz-adsterra-slot">
+                <!-- <script type="text/javascript" src="//your-adsterra-link.com"></script> -->
             </div>
+
+            <div class="dz-anchor-icon">
+                <i class="fa-solid fa-gift"></i>
+            </div>
+            <div class="dz-anchor-text">
+                Daraz වෙතින් නොමිලේ <span>Gifts</span> දිනාගන්න!
+            </div>
+            <button class="dz-anchor-btn" id="dzAnchorBtn">
+                <i class="fa-solid fa-hand-pointer"></i> Click Here
+            </button>
         `;
-        document.body.appendChild(overlay);
+        
+        document.body.appendChild(wrapper);
 
-        const box = overlay.querySelector('.dz-box');
-        const btn = overlay.querySelector('#dzClaimBtn');
-
-        // Prevent skipping: Clicking outside shakes the box instead of closing
-        overlay.addEventListener('click', (e) => {
-            if (e.target === overlay) {
-                box.classList.add('dz-shake');
-                setTimeout(() => box.classList.remove('dz-shake'), 500);
-            }
-        });
-
-        // Button Click: Open Link -> Save to LocalStorage -> Auto Hide Forever
+        const btn = wrapper.querySelector('#dzAnchorBtn');
+        
+        // Unskippable: No close button. MUST click the main button to hide.
         btn.addEventListener('click', () => {
             window.open(DARAZ_LINK, '_blank');
-            localStorage.setItem(DARAZ_STORAGE_KEY, 'true');
+            localStorage.setItem(STORAGE_KEY, 'true'); // Save to never show again
             
-            overlay.classList.add('dz-closing');
-            setTimeout(() => overlay.remove(), 500);
-        });
-    }
-
-    // 3. Adsterra Footer Popup Logic
-    function initAdsterraFooter() {
-        document.body.classList.add('has-footer-ad-popup');
-        
-        const footerAd = document.createElement('div');
-        footerAd.className = 'adsterra-footer-popup';
-        footerAd.innerHTML = `
-            <button class="adsterra-close-btn" id="closeFooterAd" title="Close Ad">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-            <div class="adsterra-ad-container">
-                <!-- ============================================== -->
-                <!-- PASTE YOUR ADSTERRA FOOTER/BANNER SCRIPT HERE  -->
-                <!-- ============================================== -->
-                
-                <!-- Placeholder (Remove this when you paste your code) -->
-                <div style="color: var(--text-secondary); font-size: 12px; letter-spacing: 2px; text-transform: uppercase; border: 1px dashed var(--border-color); padding: 15px 30px; border-radius: 8px; width: 100%; text-align: center;">
-                    <i class="fa-solid fa-rectangle-ad" style="margin-right: 8px; color: var(--accent);"></i> Adsterra Footer Ad Space
-                </div>
-            </div>
-        `;
-        document.body.appendChild(footerAd);
-
-        // Close button logic for the footer ad
-        document.getElementById('closeFooterAd').addEventListener('click', () => {
-            footerAd.style.transform = 'translateY(100%)';
-            footerAd.style.transition = 'transform 0.4s ease';
+            wrapper.classList.add('dz-hiding');
             setTimeout(() => {
-                footerAd.remove();
-                document.body.classList.remove('has-footer-ad-popup');
-            }, 400);
+                wrapper.remove();
+                document.body.classList.remove('has-dz-anchor');
+            }, 500);
         });
     }
 
-    // 4. Initialize Everything
-    window.addEventListener('DOMContentLoaded', () => {
-        initDarazPopup();
-        initAdsterraFooter();
-    });
-
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
 })();
