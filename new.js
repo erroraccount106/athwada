@@ -5,7 +5,7 @@
     const DARAZ_LINK = 'https://s.daraz.lk/s.ZUl9X';
     const STORAGE_KEY = 'daraz_anchor_hidden_v1';
 
-    // 1. Inject Professional CSS (Matches your site's dark theme)
+
     const css = `
         .dz-anchor-wrapper {
             position: fixed;
