@@ -14,13 +14,14 @@
             width: 100%;
             z-index: 9999;
             background: linear-gradient(90deg, var(--bg-darker, #050202) 0%, var(--bg-card, #1a0a0a) 50%, var(--bg-darker, #050202) 100%);
-            border-top: 2px solid #F85606; /* Daraz Orange */
-            box-shadow: 0 -10px 35px rgba(0, 0, 0, 0.95);
-            padding: 16px 30px;
+            border-top: 3px solid #F85606; /* Daraz Orange */
+            box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.95);
+            padding: 28px 30px; /* Increased padding for more height */
+            min-height: 110px;  /* Ensures a taller baseline */
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 25px;
+            gap: 30px;
             transform: translateY(100%);
             animation: dzSlideUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
             animation-delay: 1.5s; /* Slides up after page loads */
@@ -32,9 +33,9 @@
         @keyframes dzSlideDown { to { transform: translateY(100%); } }
 
         .dz-anchor-icon {
-            font-size: 38px;
+            font-size: 46px; /* Slightly larger icon */
             color: #F85606;
-            filter: drop-shadow(0 0 10px rgba(248, 86, 6, 0.5));
+            filter: drop-shadow(0 0 12px rgba(248, 86, 6, 0.5));
             animation: dzBounce 2s infinite ease-in-out;
         }
         @keyframes dzBounce {
@@ -45,7 +46,7 @@
         .dz-anchor-text {
             flex: 1;
             color: var(--text-primary, #f5f5f5);
-            font-size: 18px;
+            font-size: 22px; /* Larger text */
             font-weight: 600;
             line-height: 1.4;
             letter-spacing: 0.5px;
@@ -53,26 +54,26 @@
         .dz-anchor-text span {
             color: #F85606;
             font-weight: 800;
-            text-shadow: 0 0 8px rgba(248, 86, 6, 0.4);
+            text-shadow: 0 0 10px rgba(248, 86, 6, 0.4);
         }
 
         .dz-anchor-btn {
             background: linear-gradient(135deg, #F85606 0%, #ff7b3a 100%);
             color: #fff;
             font-weight: 700;
-            font-size: 16px;
-            padding: 14px 32px;
+            font-size: 18px; /* Larger button text */
+            padding: 16px 38px; /* Taller button */
             border-radius: 50px;
             border: none;
             cursor: pointer;
             white-space: nowrap;
-            box-shadow: 0 6px 20px rgba(248, 86, 6, 0.4);
+            box-shadow: 0 8px 25px rgba(248, 86, 6, 0.4);
             transition: all 0.3s ease;
             text-transform: uppercase;
             letter-spacing: 1.2px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             position: relative;
             overflow: hidden;
         }
@@ -87,7 +88,7 @@
         .dz-anchor-btn:hover::before { left: 100%; }
         .dz-anchor-btn:hover {
             transform: scale(1.05);
-            box-shadow: 0 8px 25px rgba(248, 86, 6, 0.6);
+            box-shadow: 0 12px 30px rgba(248, 86, 6, 0.6);
         }
         .dz-anchor-btn:active { transform: scale(0.98); }
 
@@ -95,32 +96,34 @@
         .dz-adsterra-slot {
             width: 100%;
             text-align: center;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             display: none; /* Hidden by default. Change to 'block' if you paste Adsterra code inside */
         }
 
         /* Push page content up so footer doesn't overlap your site content */
         body.has-dz-anchor {
-            padding-bottom: 90px !important;
+            padding-bottom: 130px !important; /* Increased to match new height */
         }
 
         /* Mobile Responsive */
         @media (max-width: 768px) {
             .dz-anchor-wrapper {
                 flex-direction: column;
-                gap: 12px;
-                padding: 18px 20px;
+                gap: 15px;
+                padding: 25px 20px;
                 text-align: center;
+                min-height: auto;
             }
-            .dz-anchor-icon { font-size: 32px; }
-            .dz-anchor-text { font-size: 16px; }
+            .dz-anchor-icon { font-size: 38px; }
+            .dz-anchor-text { font-size: 18px; }
             .dz-anchor-btn {
                 width: 100%;
                 justify-content: center;
-                padding: 14px 20px;
+                padding: 16px 20px;
+                font-size: 16px;
             }
             body.has-dz-anchor {
-                padding-bottom: 160px !important;
+                padding-bottom: 210px !important; /* Extra space for stacked mobile layout */
             }
         }
     `;
@@ -154,7 +157,7 @@
                 Daraz වෙතින් නොමිලේ <span>Gifts</span> දිනාගන්න!
             </div>
             <button class="dz-anchor-btn" id="dzAnchorBtn">
-                <i class="fa-solid fa-hand-pointer"></i> Click Here
+                <i class="fa-solid fa-hand-pointer"></i> Click Here to Win
             </button>
         `;
         
