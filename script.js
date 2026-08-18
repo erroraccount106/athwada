@@ -10,9 +10,9 @@ increment
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 
-const SECOND_AD_LINK = 'https://www.effectivecpmnetwork.com/d4hjh85n?key=5f43e1ede4da5f9233bfe42a17e4bc86';
-const THIRD_AD_LINK = 'https://www.effectivecpmnetwork.com/d4hjh85n?key=5f43e1ede4da5f9233bfe42a17e4bc86';
-const FOURTH_AD_LINK = 'https://www.effectivecpmnetwork.com/d4hjh85n?key=5f43e1ede4da5f9233bfe42a17e4bc86';
+const SECOND_AD_LINK = 'https://omg10.com/4/11600000';
+const THIRD_AD_LINK = 'https://omg10.com/4/11600000';
+const FOURTH_AD_LINK = 'https://omg10.com/4/11600000';
 
 // ===== HELPER TO FIX RELATIVE LINKS =====
 function ensureProtocol(url) {
