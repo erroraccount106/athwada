@@ -1,26 +1,33 @@
 import { db } from './firebase-config.js';
 import {
-collection,
-onSnapshot,
-query,
-orderBy,
-doc,
-updateDoc,
-increment
+  collection,
+  onSnapshot,
+  query,
+  orderBy,
+  doc,
+  updateDoc,
+  increment
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-
-const SECOND_AD_LINK = 'https://www.effectivecpmnetwork.com/d4hjh85n?key=5f43e1ede4da5f9233bfe42a17e4bc86';
-const THIRD_AD_LINK = 'https://www.effectivecpmnetwork.com/d4hjh85n?key=5f43e1ede4da5f9233bfe42a17e4bc86';
-const FOURTH_AD_LINK = 'https://www.effectivecpmnetwork.com/d4hjh85n?key=5f43e1ede4da5f9233bfe42a17e4bc86';
+// ===== AD LINKS (8 Total) =====
+// All links are configured to open in a new tab ('_blank')
+// Replace these URLs with your actual ad links.
+const AD_LINK_1 = 'https://www.effectivecpmnetwork.com/d4hjh85n?key=5f43e1ede4da5f9233bfe42a17e4bc86';
+const AD_LINK_2 = 'https://www.effectivecpmnetwork.com/d4hjh85n?key=5f43e1ede4da5f9233bfe42a17e4bc86';
+const AD_LINK_3 = 'https://www.effectivecpmnetwork.com/d4hjh85n?key=5f43e1ede4da5f9233bfe42a17e4bc86';
+const AD_LINK_4 = 'https://www.effectivecpmnetwork.com/d4hjh85n?key=5f43e1ede4da5f9233bfe42a17e4bc86';
+const AD_LINK_5 = 'https://www.effectivecpmnetwork.com/d4hjh85n?key=5f43e1ede4da5f9233bfe42a17e4bc86';
+const AD_LINK_6 = 'https://www.effectivecpmnetwork.com/d4hjh85n?key=5f43e1ede4da5f9233bfe42a17e4bc86';
+const AD_LINK_7 = 'https://www.effectivecpmnetwork.com/d4hjh85n?key=5f43e1ede4da5f9233bfe42a17e4bc86';
+const AD_LINK_8 = 'https://www.effectivecpmnetwork.com/d4hjh85n?key=5f43e1ede4da5f9233bfe42a17e4bc86';
 
 // ===== HELPER TO FIX RELATIVE LINKS =====
 function ensureProtocol(url) {
-    if (!url) return '#';
-    if (!url.startsWith('http://') && !url.startsWith('https://')) {
-        return 'https://' + url;
-    }
-    return url;
+  if (!url) return '#';
+  if (!url.startsWith('http://') && !url.startsWith('https://')) {
+    return 'https://' + url;
+  }
+  return url;
 }
 
 const categoriesView = document.getElementById('categoriesView');
@@ -47,360 +54,384 @@ let currentCategory = null;
 let logoClickCount = 0;
 let logoClickTimer = null;
 document.getElementById('logoClick').addEventListener('click', (e) => {
-e.preventDefault();
-logoClickCount++;
-clearTimeout(logoClickTimer);
-logoClickTimer = setTimeout(() => { logoClickCount = 0; }, 2000);
-if (logoClickCount >= 5) {
-window.location.href = 'admin.html';
-}
+  e.preventDefault();
+  logoClickCount++;
+  clearTimeout(logoClickTimer);
+  logoClickTimer = setTimeout(() => { logoClickCount = 0; }, 2000);
+  if (logoClickCount >= 5) {
+    window.location.href = 'admin.html';
+  }
 });
 
 // ===== TOAST =====
 function showToast(message, type = 'success') {
-const icon = type === 'success' ? 'fa-circle-check' : 'fa-circle-exclamation';
-toast.innerHTML = `<i class="fa-solid ${icon}"></i> ${message}`;
-toast.className = `toast show ${type}`;
-setTimeout(() => toast.classList.remove('show'), 3000);
+  const icon = type === 'success' ? 'fa-circle-check' : 'fa-circle-exclamation';
+  toast.innerHTML = `<i class="fa-solid ${icon}"></i> ${message}`;
+  toast.className = `toast show ${type}`;
+  setTimeout(() => toast.classList.remove('show'), 3000);
 }
 
 // ===== CLICK COUNT =====
 function getClickCount(postId) {
-return parseInt(localStorage.getItem(`clicks_${postId}`) || '0');
+  return parseInt(localStorage.getItem(`clicks_${postId}`) || '0');
 }
 
 function setClickCount(postId, count) {
-localStorage.setItem(`clicks_${postId}`, count.toString());
+  localStorage.setItem(`clicks_${postId}`, count.toString());
 }
 
 // ===== FORMAT DATE =====
 function formatDate(timestamp) {
-if (!timestamp) return 'Recently';
-const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
-return date.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+  if (!timestamp) return 'Recently';
+  const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+  return date.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
 // ===== GET SHARE URL =====
 function getShareUrl(postId) {
-const baseUrl = window.location.origin + window.location.pathname;
-return `${baseUrl}?movie=${postId}`;
+  const baseUrl = window.location.origin + window.location.pathname;
+  return `${baseUrl}?movie=${postId}`;
 }
 
 // ===== SHARE MOVIE =====
 function shareMovie(movie) {
-const shareUrl = getShareUrl(movie.id);
-const shareText = `Check out ${movie.title} on ALUTH EWA! ${movie.description}`;
-shareOptions.innerHTML = `<a href="https://wa.me/?text=${encodeURIComponent(shareText + ' ' + shareUrl)}" target="_blank" class="share-option whatsapp"> <i class="fa-brands fa-whatsapp"></i><span>WhatsApp</span> </a> <a href="https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}" target="_blank" class="share-option telegram"> <i class="fa-brands fa-telegram"></i><span>Telegram</span> </a> <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}" target="_blank" class="share-option facebook"> <i class="fa-brands fa-facebook"></i><span>Facebook</span> </a> <a href="https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}" target="_blank" class="share-option twitter"> <i class="fa-brands fa-twitter"></i><span>Twitter</span> </a> <a href="mailto:?subject=${encodeURIComponent(movie.title)}&body=${encodeURIComponent(shareText + ' ' + shareUrl)}" class="share-option email"> <i class="fa-solid fa-envelope"></i><span>Email</span> </a> <div class="share-option copy" onclick="window.copyShareLink('${shareUrl}')"> <i class="fa-solid fa-copy"></i><span>Copy Link</span> </div>`;
-shareModal.classList.add('active');
+  const shareUrl = getShareUrl(movie.id);
+  const shareText = `Check out ${movie.title} on ALUTH EWA! ${movie.description}`;
+  shareOptions.innerHTML = `<a href="https://wa.me/?text=${encodeURIComponent(shareText + ' ' + shareUrl)}" target="_blank" class="share-option whatsapp"> <i class="fa-brands fa-whatsapp"></i><span>WhatsApp</span> </a> <a href="https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}" target="_blank" class="share-option telegram"> <i class="fa-brands fa-telegram"></i><span>Telegram</span> </a> <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}" target="_blank" class="share-option facebook"> <i class="fa-brands fa-facebook"></i><span>Facebook</span> </a> <a href="https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}" target="_blank" class="share-option twitter"> <i class="fa-brands fa-twitter"></i><span>Twitter</span> </a> <a href="mailto:?subject=${encodeURIComponent(movie.title)}&body=${encodeURIComponent(shareText + ' ' + shareUrl)}" class="share-option email"> <i class="fa-solid fa-envelope"></i><span>Email</span> </a> <div class="share-option copy" onclick="window.copyShareLink('${shareUrl}')"> <i class="fa-solid fa-copy"></i><span>Copy Link</span> </div>`;
+  shareModal.classList.add('active');
 }
 
 window.copyShareLink = (url) => {
-navigator.clipboard.writeText(url).then(() => {
-showToast('Link copied!', 'success');
-shareModal.classList.remove('active');
-});
+  navigator.clipboard.writeText(url).then(() => {
+    showToast('Link copied!', 'success');
+    shareModal.classList.remove('active');
+  });
 };
 
 shareModalClose.addEventListener('click', () => shareModal.classList.remove('active'));
 shareModal.addEventListener('click', (e) => {
-if (e.target === shareModal) shareModal.classList.remove('active');
+  if (e.target === shareModal) shareModal.classList.remove('active');
 });
 
 // ===== GROUP MOVIES BY CATEGORY =====
 function groupByCategory(movies) {
-const groups = {};
-movies.forEach(movie => {
-const cat = movie.category || 'Uncategorized';
-if (!groups[cat]) groups[cat] = [];
-groups[cat].push(movie);
-});
-return groups;
+  const groups = {};
+  movies.forEach(movie => {
+    const cat = movie.category || 'Uncategorized';
+    if (!groups[cat]) groups[cat] = [];
+    groups[cat].push(movie);
+  });
+  return groups;
 }
 
 // ===== CATEGORY ICONS (rotate through) =====
 const categoryIcons = [
-'fa-film', 'fa-clapperboard', 'fa-video', 'fa-photo-film',
-'fa-star', 'fa-fire', 'fa-bolt', 'fa-crown'
+  'fa-film', 'fa-clapperboard', 'fa-video', 'fa-photo-film',
+  'fa-star', 'fa-fire', 'fa-bolt', 'fa-crown'
 ];
 
 function getCategoryIcon(categoryName) {
-let hash = 0;
-for (let i = 0; i < categoryName.length; i++) {
-hash = (hash * 31 + categoryName.charCodeAt(i)) | 0;
-}
-return categoryIcons[Math.abs(hash) % categoryIcons.length];
+  let hash = 0;
+  for (let i = 0; i < categoryName.length; i++) {
+    hash = (hash * 31 + categoryName.charCodeAt(i)) | 0;
+  }
+  return categoryIcons[Math.abs(hash) % categoryIcons.length];
 }
 
 // ===== RENDER CATEGORIES =====
 function renderCategories(movies, searchTerm = '') {
-const groups = groupByCategory(movies);
-const categoryNames = Object.keys(groups).sort();
+  const groups = groupByCategory(movies);
+  const categoryNames = Object.keys(groups).sort();
 
-const filtered = searchTerm
-? categoryNames.filter(cat =>
-cat.toLowerCase().includes(searchTerm) ||
-groups[cat].some(m =>
-m.title.toLowerCase().includes(searchTerm) ||
-m.description.toLowerCase().includes(searchTerm)
-)
-)
-: categoryNames;
+  const filtered = searchTerm
+    ? categoryNames.filter(cat =>
+        cat.toLowerCase().includes(searchTerm) ||
+        groups[cat].some(m =>
+          m.title.toLowerCase().includes(searchTerm) ||
+          m.description.toLowerCase().includes(searchTerm)
+        )
+      )
+    : categoryNames;
 
-if (filtered.length === 0) {
-categoriesGrid.innerHTML = `<div class="empty-state" style="grid-column: 1/-1;"> <i class="fa-solid fa-folder-open"></i> <h3>No categories found</h3> <p>${searchTerm ? 'Try a different search' : 'Check back soon!'}</p> </div>`;
-categoryCount.textContent = '0 categories';
-return;
-}
+  if (filtered.length === 0) {
+    categoriesGrid.innerHTML = `<div class="empty-state" style="grid-column: 1/-1;"> <i class="fa-solid fa-folder-open"></i> <h3>No categories found</h3> <p>${searchTerm ? 'Try a different search' : 'Check back soon!'}</p> </div>`;
+    categoryCount.textContent = '0 categories';
+    return;
+  }
 
-categoryCount.textContent = `${filtered.length} ${filtered.length === 1 ? 'category' : 'categories'} available`;
-categoriesGrid.innerHTML = filtered.map(cat => {
-const count = groups[cat].length;
-const icon = getCategoryIcon(cat);
-return `<div class="category-card" data-category="${cat}"> <div class="category-icon"> <i class="fa-solid ${icon}"></i> </div> <div class="category-name">${cat}</div> <div class="category-count"> <i class="fa-solid fa-film"></i> ${count} ${count === 1 ? 'video' : 'videos'} </div> </div>`;
-}).join('');
+  categoryCount.textContent = `${filtered.length} ${filtered.length === 1 ? 'category' : 'categories'} available`;
+  categoriesGrid.innerHTML = filtered.map(cat => {
+    const count = groups[cat].length;
+    const icon = getCategoryIcon(cat);
+    return `<div class="category-card" data-category="${cat}"> <div class="category-icon"> <i class="fa-solid ${icon}"></i> </div> <div class="category-name">${cat}</div> <div class="category-count"> <i class="fa-solid fa-film"></i> ${count} ${count === 1 ? 'video' : 'videos'} </div> </div>`;
+  }).join('');
 
-document.querySelectorAll('.category-card').forEach(card => {
-card.addEventListener('click', () => {
-openCategory(card.dataset.category);
-});
-});
+  document.querySelectorAll('.category-card').forEach(card => {
+    card.addEventListener('click', () => {
+      openCategory(card.dataset.category);
+    });
+  });
 }
 
 // ===== OPEN CATEGORY =====
 function openCategory(categoryName) {
-currentCategory = categoryName;
-const groups = groupByCategory(allMovies);
-const movies = groups[categoryName] || [];
+  currentCategory = categoryName;
+  const groups = groupByCategory(allMovies);
+  const movies = groups[categoryName] || [];
 
-categoryTitle.innerHTML = `<i class="fa-solid ${getCategoryIcon(categoryName)}"></i> ${categoryName}`;
-movieCount.textContent = `${movies.length} ${movies.length === 1 ? 'video' : 'videos'}`;
-renderMovies(movies);
+  categoryTitle.innerHTML = `<i class="fa-solid ${getCategoryIcon(categoryName)}"></i> ${categoryName}`;
+  movieCount.textContent = `${movies.length} ${movies.length === 1 ? 'video' : 'videos'}`;
+  renderMovies(movies);
 
-categoriesView.style.display = 'none';
-moviesView.style.display = 'block';
-window.scrollTo({ top: 0, behavior: 'smooth' });
+  categoriesView.style.display = 'none';
+  moviesView.style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 
-const url = new URL(window.location);
-url.searchParams.set('category', categoryName);
-window.history.pushState({}, '', url);
+  const url = new URL(window.location);
+  url.searchParams.set('category', categoryName);
+  window.history.pushState({}, '', url);
 }
 
 // ===== BACK TO CATEGORIES =====
 backBtn.addEventListener('click', () => {
-currentCategory = null;
-categoriesView.style.display = 'block';
-moviesView.style.display = 'none';
-const url = new URL(window.location);
-url.searchParams.delete('category');
-window.history.pushState({}, '', url);
+  currentCategory = null;
+  categoriesView.style.display = 'block';
+  moviesView.style.display = 'none';
+  const url = new URL(window.location);
+  url.searchParams.delete('category');
+  window.history.pushState({}, '', url);
 });
 
 // ===== RENDER MOVIES =====
 function renderMovies(movies) {
-if (movies.length === 0) {
-moviesGrid.innerHTML = `<div class="empty-state" style="grid-column: 1/-1;"> <i class="fa-solid fa-film"></i> <h3>No videos</h3> </div>`;
-return;
-}
+  if (movies.length === 0) {
+    moviesGrid.innerHTML = `<div class="empty-state" style="grid-column: 1/-1;"> <i class="fa-solid fa-film"></i> <h3>No videos</h3> </div>`;
+    return;
+  }
 
-moviesGrid.innerHTML = movies.map(movie => {
-const clicks = getClickCount(movie.id);
-// Updated to handle 4 clicks before showing movie
-const btnClass = (clicks >= 1 && clicks <= 4) ? 'watch-btn clicked' : 'watch-btn';
-const btnText = (clicks >= 1 && clicks <= 4)
-? ' <i class="fa-solid fa-play"></i> Watch Now <small>(Click again)</small>'
-: ' <i class="fa-solid fa-play"></i> Watch Now';
+  moviesGrid.innerHTML = movies.map(movie => {
+    const clicks = getClickCount(movie.id);
+    // Updated to handle 8 clicks before showing movie
+    const btnClass = (clicks >= 1 && clicks <= 8) ? 'watch-btn clicked' : 'watch-btn';
+    const remainingClicks = 9 - clicks;
+    const btnText = (clicks >= 1 && clicks <= 8)
+      ? ` <i class="fa-solid fa-play"></i> Watch Now <small>(${remainingClicks} more click${remainingClicks === 1 ? '' : 's'})</small>`
+      : ' <i class="fa-solid fa-play"></i> Watch Now';
 
-const thumbHtml = movie.thumbnail
-? `<img src="${movie.thumbnail}" alt="${movie.title}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><i class="fa-solid fa-film placeholder-icon" style="display:none"></i>`
-: `<i class="fa-solid fa-film placeholder-icon"></i>`;
+    const thumbHtml = movie.thumbnail
+      ? `<img src="${movie.thumbnail}" alt="${movie.title}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><i class="fa-solid fa-film placeholder-icon" style="display:none"></i>`
+      : `<i class="fa-solid fa-film placeholder-icon"></i>`;
 
-return `
-<div class="movie-card" data-id="${movie.id}">
-<div class="movie-thumb">
-${thumbHtml}
-<span class="movie-badge"><i class="fa-solid fa-star"></i> HD</span>
-</div>
-<div class="movie-info">
-<div class="movie-title">
-<i class="fa-solid fa-clapperboard"></i> ${movie.title}
-</div>
-<div class="movie-desc">${movie.description}</div>
-<div class="movie-meta">
-<span><i class="fa-regular fa-calendar"></i> ${formatDate(movie.createdAt)}</span>
-<span><i class="fa-solid fa-eye"></i> ${movie.views || 0}</span>
-</div>
-<button class="${btnClass}" data-id="${movie.id}">${btnText}</button>
-<button class="share-btn" data-id="${movie.id}">
-<i class="fa-solid fa-share-nodes"></i> Share
-</button>
-</div>
-</div>
-`;
-}).join('');
+    return `
+    <div class="movie-card" data-id="${movie.id}">
+      <div class="movie-thumb">
+        ${thumbHtml}
+        <span class="movie-badge"><i class="fa-solid fa-star"></i> HD</span>
+      </div>
+      <div class="movie-info">
+        <div class="movie-title">
+          <i class="fa-solid fa-clapperboard"></i> ${movie.title}
+        </div>
+        <div class="movie-desc">${movie.description}</div>
+        <div class="movie-meta">
+          <span><i class="fa-regular fa-calendar"></i> ${formatDate(movie.createdAt)}</span>
+          <span><i class="fa-solid fa-eye"></i> ${movie.views || 0}</span>
+        </div>
+        <button class="${btnClass}" data-id="${movie.id}">${btnText}</button>
+        <button class="share-btn" data-id="${movie.id}">
+          <i class="fa-solid fa-share-nodes"></i> Share
+        </button>
+      </div>
+    </div>
+    `;
+  }).join('');
 
-document.querySelectorAll('.watch-btn').forEach(btn => {
-btn.addEventListener('click', (e) => {
-e.stopPropagation();
-handleWatchClick(btn.dataset.id);
-});
-});
+  document.querySelectorAll('.watch-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      handleWatchClick(btn.dataset.id);
+    });
+  });
 
-document.querySelectorAll('.share-btn').forEach(btn => {
-btn.addEventListener('click', (e) => {
-e.stopPropagation();
-const movie = allMovies.find(m => m.id === btn.dataset.id);
-if (movie) shareMovie(movie);
-});
-});
+  document.querySelectorAll('.share-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const movie = allMovies.find(m => m.id === btn.dataset.id);
+      if (movie) shareMovie(movie);
+    });
+  });
 
-document.querySelectorAll('.movie-card').forEach(card => {
-card.addEventListener('click', () => openModal(card.dataset.id));
-});
+  document.querySelectorAll('.movie-card').forEach(card => {
+    card.addEventListener('click', () => openModal(card.dataset.id));
+  });
 }
 
 // ===== HANDLE WATCH CLICK =====
 function handleWatchClick(postId) {
-const movie = allMovies.find(m => m.id === postId);
-if (!movie) return;
+  const movie = allMovies.find(m => m.id === postId);
+  if (!movie) return;
 
-let clicks = getClickCount(postId);
-clicks++;
+  let clicks = getClickCount(postId);
+  clicks++;
 
-if (clicks === 1) {
-setClickCount(postId, 1);
-showToast('Opening sponsor...', 'success');
-window.open(ensureProtocol(movie.adLink), '_blank');
-updateBtnState(postId, true);
-try { updateDoc(doc(db, 'posts', postId), { views: increment(1) }); } catch (e) {}
-} else if (clicks === 2) {
-setClickCount(postId, 2);
-showToast('Loading second ad...', 'success');
-window.open(ensureProtocol(SECOND_AD_LINK), '_blank');
-updateBtnState(postId, true);
-} else if (clicks === 3) {
-setClickCount(postId, 3);
-showToast('Loading third ad...', 'success');
-window.open(ensureProtocol(THIRD_AD_LINK), '_blank');
-updateBtnState(postId, true);
-} else if (clicks === 4) {
-setClickCount(postId, 4);
-showToast('Loading fourth ad...', 'success');
-window.open(ensureProtocol(FOURTH_AD_LINK), '_blank');
-updateBtnState(postId, true);
-} else if (clicks >= 5) {
-setClickCount(postId, 0);
-window.open(ensureProtocol(movie.fileLink), '_blank');
-showToast('Enjoy the movie!', 'success');
-updateBtnState(postId, false);
-}
+  // All window.open calls use '_blank' and 'noopener,noreferrer' to guarantee a new tab
+  if (clicks === 1) {
+    setClickCount(postId, 1);
+    showToast('Opening sponsor 1...', 'success');
+    window.open(ensureProtocol(movie.adLink || AD_LINK_1), '_blank', 'noopener,noreferrer');
+    updateBtnState(postId, true);
+    try { updateDoc(doc(db, 'posts', postId), { views: increment(1) }); } catch (e) {}
+  } else if (clicks === 2) {
+    setClickCount(postId, 2);
+    showToast('Opening sponsor 2...', 'success');
+    window.open(ensureProtocol(AD_LINK_2), '_blank', 'noopener,noreferrer');
+    updateBtnState(postId, true);
+  } else if (clicks === 3) {
+    setClickCount(postId, 3);
+    showToast('Opening sponsor 3...', 'success');
+    window.open(ensureProtocol(AD_LINK_3), '_blank', 'noopener,noreferrer');
+    updateBtnState(postId, true);
+  } else if (clicks === 4) {
+    setClickCount(postId, 4);
+    showToast('Opening sponsor 4...', 'success');
+    window.open(ensureProtocol(AD_LINK_4), '_blank', 'noopener,noreferrer');
+    updateBtnState(postId, true);
+  } else if (clicks === 5) {
+    setClickCount(postId, 5);
+    showToast('Opening sponsor 5...', 'success');
+    window.open(ensureProtocol(AD_LINK_5), '_blank', 'noopener,noreferrer');
+    updateBtnState(postId, true);
+  } else if (clicks === 6) {
+    setClickCount(postId, 6);
+    showToast('Opening sponsor 6...', 'success');
+    window.open(ensureProtocol(AD_LINK_6), '_blank', 'noopener,noreferrer');
+    updateBtnState(postId, true);
+  } else if (clicks === 7) {
+    setClickCount(postId, 7);
+    showToast('Opening sponsor 7...', 'success');
+    window.open(ensureProtocol(AD_LINK_7), '_blank', 'noopener,noreferrer');
+    updateBtnState(postId, true);
+  } else if (clicks === 8) {
+    setClickCount(postId, 8);
+    showToast('Opening sponsor 8...', 'success');
+    window.open(ensureProtocol(AD_LINK_8), '_blank', 'noopener,noreferrer');
+    updateBtnState(postId, true);
+  } else if (clicks >= 9) {
+    setClickCount(postId, 0);
+    window.open(ensureProtocol(movie.fileLink), '_blank', 'noopener,noreferrer');
+    showToast('Enjoy the movie!', 'success');
+    updateBtnState(postId, false);
+  }
 }
 
 // ===== HELPER TO UPDATE BUTTON STATE =====
 function updateBtnState(postId, isClicked) {
-setTimeout(() => {
-const btn = document.querySelector(`.watch-btn[data-id="${postId}"]`);
-if (btn) {
-if (isClicked) {
-btn.classList.add('clicked');
-btn.innerHTML = '<i class="fa-solid fa-play"></i> Watch Now <small>(Click again)</small>';
-} else {
-btn.classList.remove('clicked');
-btn.innerHTML = '<i class="fa-solid fa-play"></i> Watch Now';
-}
-}
-}, 500);
+  setTimeout(() => {
+    const btn = document.querySelector(`.watch-btn[data-id="${postId}"]`);
+    if (btn) {
+      if (isClicked) {
+        btn.classList.add('clicked');
+        const remainingClicks = 9 - getClickCount(postId);
+        btn.innerHTML = `<i class="fa-solid fa-play"></i> Watch Now <small>(${remainingClicks} more click${remainingClicks === 1 ? '' : 's'})</small>`;
+      } else {
+        btn.classList.remove('clicked');
+        btn.innerHTML = '<i class="fa-solid fa-play"></i> Watch Now';
+      }
+    }
+  }, 500);
 }
 
 // ===== MODAL =====
 function openModal(postId) {
-const movie = allMovies.find(m => m.id === postId);
-if (!movie) return;
+  const movie = allMovies.find(m => m.id === postId);
+  if (!movie) return;
 
-const clicks = getClickCount(postId);
-// Updated to handle 4 clicks before showing movie
-const statusHtml = (clicks >= 1 && clicks <= 4)
-? ' <span style="color:#228b22"> <i class="fa-solid fa-check-circle"></i> Ready to watch </span>'
-: ' <span style="color:var(--accent)"> <i class="fa-solid fa-info-circle"></i> Click Watch Now </span>';
+  const clicks = getClickCount(postId);
+  // Updated to handle 8 clicks before showing movie
+  const remainingClicks = 9 - clicks;
+  const statusHtml = (clicks >= 1 && clicks <= 8)
+    ? ` <span style="color:#228b22"> <i class="fa-solid fa-check-circle"></i> ${remainingClicks} more click${remainingClicks === 1 ? '' : 's'} to watch </span>`
+    : ' <span style="color:var(--accent)"> <i class="fa-solid fa-info-circle"></i> Click Watch Now </span>';
 
-modalBody.innerHTML = `<div style="text-align:center; margin-bottom:20px;"> <i class="fa-solid fa-clapperboard" style="font-size:50px; color:var(--accent);"></i> </div> <h2 style="text-align:center; margin-bottom:15px;">${movie.title}</h2> <p style="color:var(--text-secondary); line-height:1.7; margin-bottom:20px;">${movie.description}</p> <div style="background:var(--bg-darker); padding:15px; border-radius:10px; margin-bottom:20px;"> <div style="display:flex; justify-content:space-between; margin-bottom:8px;"> <span><i class="fa-solid fa-folder"></i> Category:</span> <strong>${movie.category || 'Uncategorized'}</strong> </div> <div style="display:flex; justify-content:space-between; margin-bottom:8px;"> <span><i class="fa-regular fa-calendar"></i> Added:</span> <strong>${formatDate(movie.createdAt)}</strong> </div> <div style="display:flex; justify-content:space-between;"> <span><i class="fa-solid fa-eye"></i> Views:</span> <strong>${movie.views || 0}</strong> </div> </div> <div style="text-align:center; margin-bottom:15px;">${statusHtml}</div> <button class="watch-btn ${(clicks>=1 && clicks<=4)?'clicked':''}" onclick="window.handleWatchClickGlobal('${movie.id}')" style="width:100%; margin-bottom:10px;"> <i class="fa-solid fa-play"></i> Watch Now </button> <button class="share-btn" onclick="window.shareMovieGlobal('${movie.id}')" style="width:100%;"> <i class="fa-solid fa-share-nodes"></i> Share </button>`;
+  modalBody.innerHTML = `<div style="text-align:center; margin-bottom:20px;"> <i class="fa-solid fa-clapperboard" style="font-size:50px; color:var(--accent);"></i> </div> <h2 style="text-align:center; margin-bottom:15px;">${movie.title}</h2> <p style="color:var(--text-secondary); line-height:1.7; margin-bottom:20px;">${movie.description}</p> <div style="background:var(--bg-darker); padding:15px; border-radius:10px; margin-bottom:20px;"> <div style="display:flex; justify-content:space-between; margin-bottom:8px;"> <span><i class="fa-solid fa-folder"></i> Category:</span> <strong>${movie.category || 'Uncategorized'}</strong> </div> <div style="display:flex; justify-content:space-between; margin-bottom:8px;"> <span><i class="fa-regular fa-calendar"></i> Added:</span> <strong>${formatDate(movie.createdAt)}</strong> </div> <div style="display:flex; justify-content:space-between;"> <span><i class="fa-solid fa-eye"></i> Views:</span> <strong>${movie.views || 0}</strong> </div> </div> <div style="text-align:center; margin-bottom:15px;">${statusHtml}</div> <button class="watch-btn ${(clicks>=1 && clicks<=8)?'clicked':''}" onclick="window.handleWatchClickGlobal('${movie.id}')" style="width:100%; margin-bottom:10px;"> <i class="fa-solid fa-play"></i> Watch Now </button> <button class="share-btn" onclick="window.shareMovieGlobal('${movie.id}')" style="width:100%;"> <i class="fa-solid fa-share-nodes"></i> Share </button>`;
 
-modal.classList.add('active');
+  modal.classList.add('active');
 }
 
 window.handleWatchClickGlobal = handleWatchClick;
 window.shareMovieGlobal = (postId) => {
-const movie = allMovies.find(m => m.id === postId);
-if (movie) shareMovie(movie);
+  const movie = allMovies.find(m => m.id === postId);
+  if (movie) shareMovie(movie);
 };
 
 modalClose.addEventListener('click', () => modal.classList.remove('active'));
 modal.addEventListener('click', (e) => {
-if (e.target === modal) modal.classList.remove('active');
+  if (e.target === modal) modal.classList.remove('active');
 });
 
 // ===== SEARCH =====
 searchInput.addEventListener('input', (e) => {
-const term = e.target.value.toLowerCase().trim();
-if (currentCategory) {
-const groups = groupByCategory(allMovies);
-const movies = (groups[currentCategory] || []).filter(m =>
-m.title.toLowerCase().includes(term) ||
-m.description.toLowerCase().includes(term)
-);
-renderMovies(movies);
-movieCount.textContent = `${movies.length} ${movies.length === 1 ? 'movie' : 'movies'}`;
-} else {
-renderCategories(allMovies, term);
-}
+  const term = e.target.value.toLowerCase().trim();
+  if (currentCategory) {
+    const groups = groupByCategory(allMovies);
+    const movies = (groups[currentCategory] || []).filter(m =>
+      m.title.toLowerCase().includes(term) ||
+      m.description.toLowerCase().includes(term)
+    );
+    renderMovies(movies);
+    movieCount.textContent = `${movies.length} ${movies.length === 1 ? 'movie' : 'movies'}`;
+  } else {
+    renderCategories(allMovies, term);
+  }
 });
 
 // ===== HANDLE URL PARAMS =====
 function handleUrlParams() {
-const params = new URLSearchParams(window.location.search);
-const category = params.get('category');
-const movieId = params.get('movie');
+  const params = new URLSearchParams(window.location.search);
+  const category = params.get('category');
+  const movieId = params.get('movie');
 
-if (movieId) {
-const checkMovie = setInterval(() => {
-const movie = allMovies.find(m => m.id === movieId);
-if (movie) {
-clearInterval(checkMovie);
-if (movie.category) openCategory(movie.category);
-setTimeout(() => openModal(movieId), 300);
-}
-}, 100);
-} else if (category) {
-const checkCategory = setInterval(() => {
-if (allMovies.length > 0 || categoriesGrid.innerHTML !== '') {
-clearInterval(checkCategory);
-openCategory(category);
-}
-}, 100);
-}
+  if (movieId) {
+    const checkMovie = setInterval(() => {
+      const movie = allMovies.find(m => m.id === movieId);
+      if (movie) {
+        clearInterval(checkMovie);
+        if (movie.category) openCategory(movie.category);
+        setTimeout(() => openModal(movieId), 300);
+      }
+    }, 100);
+  } else if (category) {
+    const checkCategory = setInterval(() => {
+      if (allMovies.length > 0 || categoriesGrid.innerHTML !== '') {
+        clearInterval(checkCategory);
+        openCategory(category);
+      }
+    }, 100);
+  }
 }
 
 // ===== LOAD FROM FIREBASE =====
 const q = query(collection(db, 'posts'), orderBy('createdAt', 'desc'));
 onSnapshot(q, (snapshot) => {
-allMovies = snapshot.docs.map(doc => ({
-id: doc.id,
-...doc.data()
-}));
-renderCategories(allMovies);
-handleUrlParams();
+  allMovies = snapshot.docs.map(doc => ({
+    id: doc.id,
+    ...doc.data()
+  }));
+  renderCategories(allMovies);
+  handleUrlParams();
 }, (error) => {
-console.error('Firebase error:', error);
-categoriesGrid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"> <i class="fa-solid fa-triangle-exclamation"></i> <h3>Connection Error</h3> <p>Check Firebase configuration</p> </div>`;
+  console.error('Firebase error:', error);
+  categoriesGrid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"> <i class="fa-solid fa-triangle-exclamation"></i> <h3>Connection Error</h3> <p>Check Firebase configuration</p> </div>`;
 });
 
 window.addEventListener('popstate', () => {
-const params = new URLSearchParams(window.location.search);
-const category = params.get('category');
-if (category) {
-openCategory(category);
-} else {
-currentCategory = null;
-categoriesView.style.display = 'block';
-moviesView.style.display = 'none';
-}
+  const params = new URLSearchParams(window.location.search);
+  const category = params.get('category');
+  if (category) {
+    openCategory(category);
+  } else {
+    currentCategory = null;
+    categoriesView.style.display = 'block';
+    moviesView.style.display = 'none';
+  }
 });
