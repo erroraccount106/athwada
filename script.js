@@ -10,7 +10,6 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 // ===== AD LINKS (8 Total) =====
-// All links are configured to open in a new tab ('_blank')
 // Replace these URLs with your actual ad links.
 const AD_LINK_1 = 'https://www.effectivecpmnetwork.com/d4hjh85n?key=5f43e1ede4da5f9233bfe42a17e4bc86';
 const AD_LINK_2 = 'https://www.effectivecpmnetwork.com/d4hjh85n?key=5f43e1ede4da5f9233bfe42a17e4bc86';
@@ -211,11 +210,10 @@ function renderMovies(movies) {
 
   moviesGrid.innerHTML = movies.map(movie => {
     const clicks = getClickCount(movie.id);
-    // Updated to handle 8 clicks before showing movie
+    // Clean UI: No click counts shown to the user
     const btnClass = (clicks >= 1 && clicks <= 8) ? 'watch-btn clicked' : 'watch-btn';
-    const remainingClicks = 9 - clicks;
     const btnText = (clicks >= 1 && clicks <= 8)
-      ? ` <i class="fa-solid fa-play"></i> Watch Now <small>(${remainingClicks} more click${remainingClicks === 1 ? '' : 's'})</small>`
+      ? ' <i class="fa-solid fa-spinner fa-spin"></i> Watch Now <small>(Processing...)</small>'
       : ' <i class="fa-solid fa-play"></i> Watch Now';
 
     const thumbHtml = movie.thumbnail
@@ -274,46 +272,47 @@ function handleWatchClick(postId) {
   let clicks = getClickCount(postId);
   clicks++;
 
-  // All window.open calls use '_blank' and 'noopener,noreferrer' to guarantee a new tab
+  // '_blank' with 'noopener,noreferrer' guarantees a new tab opens 
+  // and keeps the user focused on your current website tab.
   if (clicks === 1) {
     setClickCount(postId, 1);
-    showToast('Opening sponsor 1...', 'success');
+    showToast('Opening sponsor...', 'success');
     window.open(ensureProtocol(movie.adLink || AD_LINK_1), '_blank', 'noopener,noreferrer');
     updateBtnState(postId, true);
     try { updateDoc(doc(db, 'posts', postId), { views: increment(1) }); } catch (e) {}
   } else if (clicks === 2) {
     setClickCount(postId, 2);
-    showToast('Opening sponsor 2...', 'success');
+    showToast('Opening sponsor...', 'success');
     window.open(ensureProtocol(AD_LINK_2), '_blank', 'noopener,noreferrer');
     updateBtnState(postId, true);
   } else if (clicks === 3) {
     setClickCount(postId, 3);
-    showToast('Opening sponsor 3...', 'success');
+    showToast('Opening sponsor...', 'success');
     window.open(ensureProtocol(AD_LINK_3), '_blank', 'noopener,noreferrer');
     updateBtnState(postId, true);
   } else if (clicks === 4) {
     setClickCount(postId, 4);
-    showToast('Opening sponsor 4...', 'success');
+    showToast('Opening sponsor...', 'success');
     window.open(ensureProtocol(AD_LINK_4), '_blank', 'noopener,noreferrer');
     updateBtnState(postId, true);
   } else if (clicks === 5) {
     setClickCount(postId, 5);
-    showToast('Opening sponsor 5...', 'success');
+    showToast('Opening sponsor...', 'success');
     window.open(ensureProtocol(AD_LINK_5), '_blank', 'noopener,noreferrer');
     updateBtnState(postId, true);
   } else if (clicks === 6) {
     setClickCount(postId, 6);
-    showToast('Opening sponsor 6...', 'success');
+    showToast('Opening sponsor...', 'success');
     window.open(ensureProtocol(AD_LINK_6), '_blank', 'noopener,noreferrer');
     updateBtnState(postId, true);
   } else if (clicks === 7) {
     setClickCount(postId, 7);
-    showToast('Opening sponsor 7...', 'success');
+    showToast('Opening sponsor...', 'success');
     window.open(ensureProtocol(AD_LINK_7), '_blank', 'noopener,noreferrer');
     updateBtnState(postId, true);
   } else if (clicks === 8) {
     setClickCount(postId, 8);
-    showToast('Opening sponsor 8...', 'success');
+    showToast('Opening sponsor...', 'success');
     window.open(ensureProtocol(AD_LINK_8), '_blank', 'noopener,noreferrer');
     updateBtnState(postId, true);
   } else if (clicks >= 9) {
@@ -331,8 +330,7 @@ function updateBtnState(postId, isClicked) {
     if (btn) {
       if (isClicked) {
         btn.classList.add('clicked');
-        const remainingClicks = 9 - getClickCount(postId);
-        btn.innerHTML = `<i class="fa-solid fa-play"></i> Watch Now <small>(${remainingClicks} more click${remainingClicks === 1 ? '' : 's'})</small>`;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Watch Now <small>(Processing...)</small>';
       } else {
         btn.classList.remove('clicked');
         btn.innerHTML = '<i class="fa-solid fa-play"></i> Watch Now';
@@ -347,10 +345,9 @@ function openModal(postId) {
   if (!movie) return;
 
   const clicks = getClickCount(postId);
-  // Updated to handle 8 clicks before showing movie
-  const remainingClicks = 9 - clicks;
+  // Clean UI: No click counts shown in the modal either
   const statusHtml = (clicks >= 1 && clicks <= 8)
-    ? ` <span style="color:#228b22"> <i class="fa-solid fa-check-circle"></i> ${remainingClicks} more click${remainingClicks === 1 ? '' : 's'} to watch </span>`
+    ? ' <span style="color:#228b22"> <i class="fa-solid fa-check-circle"></i> Processing... </span>'
     : ' <span style="color:var(--accent)"> <i class="fa-solid fa-info-circle"></i> Click Watch Now </span>';
 
   modalBody.innerHTML = `<div style="text-align:center; margin-bottom:20px;"> <i class="fa-solid fa-clapperboard" style="font-size:50px; color:var(--accent);"></i> </div> <h2 style="text-align:center; margin-bottom:15px;">${movie.title}</h2> <p style="color:var(--text-secondary); line-height:1.7; margin-bottom:20px;">${movie.description}</p> <div style="background:var(--bg-darker); padding:15px; border-radius:10px; margin-bottom:20px;"> <div style="display:flex; justify-content:space-between; margin-bottom:8px;"> <span><i class="fa-solid fa-folder"></i> Category:</span> <strong>${movie.category || 'Uncategorized'}</strong> </div> <div style="display:flex; justify-content:space-between; margin-bottom:8px;"> <span><i class="fa-regular fa-calendar"></i> Added:</span> <strong>${formatDate(movie.createdAt)}</strong> </div> <div style="display:flex; justify-content:space-between;"> <span><i class="fa-solid fa-eye"></i> Views:</span> <strong>${movie.views || 0}</strong> </div> </div> <div style="text-align:center; margin-bottom:15px;">${statusHtml}</div> <button class="watch-btn ${(clicks>=1 && clicks<=8)?'clicked':''}" onclick="window.handleWatchClickGlobal('${movie.id}')" style="width:100%; margin-bottom:10px;"> <i class="fa-solid fa-play"></i> Watch Now </button> <button class="share-btn" onclick="window.shareMovieGlobal('${movie.id}')" style="width:100%;"> <i class="fa-solid fa-share-nodes"></i> Share </button>`;
